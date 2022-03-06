@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+const int N = 2e3 + 5, M = 1e6 + 5;
+int t, cnt = 1, n, m, u, v;
+vector<int> adjList[N];
+int color[N];
+
+bool BFS(int a) {
+    color[a] = 1;
+    queue<int> q;
+    q.push(a);
+    while (!q.empty()){
+        int u = q.front();
+        q.pop();
+        for (int v : adjList[u]){
+            if (color[v] == 0){
+                color[v] = color[u] == 1 ? 2 : 1;
+                q.push(v);
+            }
+            else if (color[v] == color[u]){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void init() {
+    for (int i = 1;i < N; i++){
+        adjList[i].clear();
+        color[i] = 0;
+    }
+}
+int main() {
+    scanf("%d", &t);
+    while (t--){
+        init();
+        scanf("%d %d", &n, &m);
+        for (int i = 1; i <= m; i++){
+            scanf("%d %d", &u, &v);
+            adjList[u].push_back(v);
+            adjList[v].push_back(u);
+        }
+        bool FLAG = false;
+        for (int i = 1; i <= n; i++){
+            if (color[i] == 0){
+                if (BFS(i)) {
+                    FLAG = true;
+                    break;
+                }
+            }
+        }
+        printf("Scenario #%d:\n", cnt++);
+        puts(FLAG ? "Suspicious bugs found!" : "No suspicious bugs found!");
+    }
+}
